@@ -33,6 +33,13 @@ pub fn core_main() -> Option<Vec<String>> {
         return None;
     }
     crate::load_custom_client();
+    // Set Aqsacloud Desk branding; overridable by custom.txt
+    if config::APP_NAME.read().unwrap().eq("RustDesk") {
+        *config::APP_NAME.write().unwrap() = "Aqsacloud Desk".to_owned();
+    }
+    if config::PROD_RENDEZVOUS_SERVER.read().unwrap().is_empty() {
+        *config::PROD_RENDEZVOUS_SERVER.write().unwrap() = "40.81.233.123".to_owned();
+    }
     #[cfg(windows)]
     if !crate::platform::windows::bootstrap() {
         // return None to terminate the process

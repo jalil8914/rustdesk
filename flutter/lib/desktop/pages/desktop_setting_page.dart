@@ -289,7 +289,7 @@ class _DesktopSettingPageState extends State<DesktopSettingPage>
               ],
             ),
           ),
-          const VerticalDivider(width: 1),
+          const SizedBox(width: 1),
           Expanded(
             child: Container(
               color: Theme.of(context).scaffoldBackgroundColor,
@@ -355,11 +355,17 @@ class _DesktopSettingPageState extends State<DesktopSettingPage>
   Widget _listItem({required _TabInfo tab}) {
     return Obx(() {
       bool selected = tab.key == selectedTab.value;
-      return SizedBox(
+      final textColor = Theme.of(context).textTheme.titleLarge?.color;
+      return Container(
         width: _kTabWidth,
         height: _kTabHeight,
-        child: InkWell(
-          onTap: () {
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+        child: Material(
+          color: selected ? _accentColor.withOpacity(0.14) : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: () {
             if (selectedTab.value != tab.key) {
               int index = DesktopSettingPage.tabKeys.indexOf(tab.key);
               if (index == -1) {
@@ -368,26 +374,23 @@ class _DesktopSettingPageState extends State<DesktopSettingPage>
               controller.jumpToPage(index);
             }
             selectedTab.value = tab.key;
-          },
+            },
           child: Row(children: [
-            Container(
-              width: 4,
-              height: _kTabHeight * 0.7,
-              color: selected ? _accentColor : null,
-            ),
             Icon(
               selected ? tab.selected : tab.unselected,
-              color: selected ? _accentColor : null,
-              size: 20,
-            ).marginOnly(left: 13, right: 10),
+              color: selected ? _accentColor : textColor?.withOpacity(0.55),
+              size: 19,
+            ).marginOnly(left: 12, right: 11),
             Text(
               translate(tab.label),
               style: TextStyle(
-                  color: selected ? _accentColor : null,
-                  fontWeight: FontWeight.w400,
+                  color:
+                      selected ? _accentColor : textColor?.withOpacity(0.85),
+                  fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
                   fontSize: _kContentFontSize),
             ),
           ]),
+          ),
         ),
       );
     });

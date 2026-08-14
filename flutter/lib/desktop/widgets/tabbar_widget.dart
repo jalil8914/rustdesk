@@ -641,8 +641,9 @@ class _DesktopTabState extends State<DesktopTab>
                         Offstage(
                             offstage: !showTitle,
                             child: const Text(
-                              "Aqsacloud Desk",
-                              style: TextStyle(fontSize: 13),
+                              "Aqsacloud",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.w500),
                             ).marginOnly(left: 2))
                       ]).marginOnly(
                         left: 5,

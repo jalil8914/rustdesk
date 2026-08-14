@@ -40,6 +40,18 @@ pub fn core_main() -> Option<Vec<String>> {
     if config::PROD_RENDEZVOUS_SERVER.read().unwrap().is_empty() {
         *config::PROD_RENDEZVOUS_SERVER.write().unwrap() = "40.81.233.123".to_owned();
     }
+    // Built-in default for the self-hosted server's public key.
+    //
+    // config::RS_PUB_KEY is a `const` inside the hbb_common submodule, which this
+    // repo cannot patch, so the key is injected as a runtime setting instead.
+    // DEFAULT_SETTINGS is the lowest-priority source in Config::get_option, so a
+    // value the user sets in the GUI (CONFIG2) still wins over this default.
+    {
+        let mut settings = config::DEFAULT_SETTINGS.write().unwrap();
+        settings
+            .entry("key".to_owned())
+            .or_insert_with(|| "ZcB8ewCtyWslUP911rTiyQ9B8LcO2brghndeO3UmImo=".to_owned());
+    }
     #[cfg(windows)]
     if !crate::platform::windows::bootstrap() {
         // return None to terminate the process

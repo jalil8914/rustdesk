@@ -1,10 +1,15 @@
-name: Brand branch build
+# Full release build for the Aqsacloud client.
+#
+# Triggered by pushes to aqsacloud/main. Day-to-day work happens on
+# aqsacloud/dev, which only runs the fast flutter-analyze gate; merge dev into
+# main when you want binaries.
+name: Aqsacloud release build
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - copilot/merge-branches-into-main
+      - aqsacloud/main
 
 permissions:
   contents: write
@@ -14,5 +19,5 @@ jobs:
     uses: ./.github/workflows/flutter-build.yml
     with:
       upload-artifact: true
-      upload-tag: brand-${{ github.run_number }}
+      upload-tag: aqsacloud-${{ github.run_number }}
     secrets: inherit

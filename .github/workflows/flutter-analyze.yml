@@ -1,6 +1,6 @@
 # Fast correctness gate for Dart changes.
 #
-# The full brand build takes ~40 minutes; this catches compile errors in the
+# The full release build takes ~40 minutes; this catches compile errors in the
 # Flutter layer in a few. It has to generate the FRB bindings first, because
 # flutter/lib imports generated_bridge.dart, which is not committed.
 name: Flutter analyze
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - copilot/modify-rustdesk-design
+      - aqsacloud/dev
 
 jobs:
   generate-bridge:

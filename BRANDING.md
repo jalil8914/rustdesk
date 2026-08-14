@@ -99,6 +99,30 @@ which surfaces as "no matching package" for versions that plainly exist.
 Removed from all three container jobs. If armv7 sciter starts failing again with
 a missing-crate error, check whether an upstream merge reintroduced it.
 
+### 8. The installer must rename the binary
+
+`copy_raw_cmd()` XCOPYs the source folder verbatim, so the executable installs
+under its **cargo** name, `rustdesk.exe`. But `get_install_info()` derives
+
+```
+exe = <path>\<get_app_name()>.exe      ->  C:\Program Files\Aqsacloud\Aqsacloud.exe
+```
+
+and that path is used for the desktop shortcut, the `sc create` binpath, and the
+"am I already installed?" check. Without a rename that file never exists, so:
+
+- the desktop shortcut does nothing
+- the service cannot be registered
+- the installed copy keeps offering to install itself
+
+Upstream cannot hit this: `RustDesk` matches `rustdesk.exe` case-insensitively
+on Windows. Any rebranded name diverges from the cargo binary name and breaks
+the assumption.
+
+`rename_exe_cmd()` exists for this. **Both** install paths must call it -
+`install_me()` and the MSI/update path around `run_after_install`. Only the
+latter did upstream.
+
 ---
 
 ## Server configuration

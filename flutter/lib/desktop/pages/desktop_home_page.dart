@@ -646,15 +646,16 @@ class _DesktopHomePageState extends State<DesktopHomePage>
               0, marginTop, 0, bind.isIncomingOnly() ? marginTop : 0),
           child: Container(
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Color.fromARGB(255, 226, 66, 188),
-                  Color.fromARGB(255, 244, 114, 124),
-                ],
-              )),
-              padding: EdgeInsets.all(20),
+                // was a magenta->salmon gradient, by far the loudest element on
+                // the window. A flat brand card with an accent rule keeps the
+                // warning legible without hijacking the whole left pane.
+                color: Theme.of(context).colorScheme.background,
+                borderRadius: BorderRadius.circular(12),
+                border: Border(
+                  left: BorderSide(color: MyTheme.accent, width: 3),
+                ),
+              ),
+              padding: EdgeInsets.all(16),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -664,7 +665,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                   child: Text(
                                 translate(title),
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color: MyTheme.accent,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15),
                               ).marginOnly(bottom: 6)),

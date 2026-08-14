@@ -1,0 +1,44 @@
+# Fast correctness gate for Dart changes.
+#
+# The full brand build takes ~40 minutes; this catches compile errors in the
+# Flutter layer in a few. It has to generate the FRB bindings first, because
+# flutter/lib imports generated_bridge.dart, which is not committed.
+name: Flutter analyze
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - copilot/modify-rustdesk-design
+
+jobs:
+  generate-bridge:
+    uses: ./.github/workflows/bridge.yml
+
+  analyze:
+    name: flutter analyze
+    needs: [generate-bridge]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Restore bridge files
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: bridge-artifact
+          path: ./
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+
+      - name: Install dependencies
+        working-directory: flutter
+        run: flutter pub get
+
+      - name: Analyze
+        working-directory: flutter
+        # infos/warnings are pre-existing upstream noise; only errors should block
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings lib

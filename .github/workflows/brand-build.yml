@@ -7,7 +7,7 @@ on:
       - copilot/merge-branches-into-main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:

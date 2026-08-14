@@ -66,12 +66,23 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     return _buildBlock(
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (!isIncomingOnly) _buildIconRail(context),
-        buildLeftPane(context),
-        if (!isIncomingOnly) const VerticalDivider(width: 1),
-        if (!isIncomingOnly) Expanded(child: buildRightPane(context)),
-      ],
+      // Sidebar | connect + device list | your-ID column.
+      //
+      // The ID column moves to the right so the layout reads sidebar-then-
+      // content, matching the concept. It is a reorder rather than a rebuild:
+      // ConnectionPage owns the connect field and the peer list as a single
+      // column, and splitting those would mean rewriting its build method.
+      //
+      // Incoming-only keeps the original single-pane layout untouched - that
+      // mode runs in a narrow fixed-size window with no room for a sidebar.
+      children: isIncomingOnly
+          ? [buildLeftPane(context)]
+          : [
+              _buildIconRail(context),
+              Expanded(child: buildRightPane(context)),
+              const VerticalDivider(width: 1),
+              buildLeftPane(context),
+            ],
     ));
   }
 

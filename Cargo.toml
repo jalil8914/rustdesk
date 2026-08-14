@@ -1,5 +1,5 @@
 [package]
-name = "aqsacloud-desk"
+name = "rustdesk"
 version = "1.4.9"
 authors = ["Aqsacloud <info@aqsacloud.com>"]
 edition = "2021"

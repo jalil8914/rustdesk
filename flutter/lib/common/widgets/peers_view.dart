@@ -93,10 +93,8 @@ class _PeersViewState extends State<_PeersView>
   // "Oops, no recent sessions! Time to plan a new one." in every language file,
   // so translating them would put the old voice straight back on screen.
   final HashMap<String, String> _emptyMessages = HashMap.from({
-    LoadEvent.recent: 'No recent sessions.
-Connect to a device to see it here.',
-    LoadEvent.favorite: 'No favourites yet.
-Star a device to keep it close.',
+    LoadEvent.recent: 'No recent sessions.\nConnect to a device to see it here.',
+    LoadEvent.favorite: 'No favourites yet.\nStar a device to keep it close.',
     LoadEvent.lan: 'No devices found on this network.',
     LoadEvent.addressBook: 'Your address book is empty.',
   });

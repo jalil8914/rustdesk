@@ -48,6 +48,12 @@ pub fn core_main() -> Option<Vec<String>> {
     // value the user sets in the GUI (CONFIG2) still wins over this default.
     {
         let mut settings = config::DEFAULT_SETTINGS.write().unwrap();
+        // Also seed the visible option, not just PROD_RENDEZVOUS_SERVER: the
+        // Network settings dialog reads "custom-rendezvous-server", so without
+        // this the ID server box renders empty even though the fallback works.
+        settings
+            .entry("custom-rendezvous-server".to_owned())
+            .or_insert_with(|| "40.81.233.123".to_owned());
         settings
             .entry("key".to_owned())
             .or_insert_with(|| "ZcB8ewCtyWslUP911rTiyQ9B8LcO2brghndeO3UmImo=".to_owned());

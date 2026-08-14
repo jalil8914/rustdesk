@@ -442,14 +442,12 @@ class _CmHeaderState extends State<_CmHeader>
     super.build(context);
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [
-            Color(0xff00bfe1),
-            Color(0xff0071ff),
-          ],
+        // was a cyan->blue gradient, the loudest element in the dialog and the
+        // last obviously-upstream surface a user sees at connect time.
+        color: Theme.of(context).colorScheme.background,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border(
+          left: BorderSide(color: MyTheme.accent, width: 3),
         ),
       ),
       margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
@@ -583,15 +581,17 @@ class _CmHeaderState extends State<_CmHeader>
       height: 70,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: str2color(client.name),
-        borderRadius: BorderRadius.circular(15.0),
+        // str2color hashes the peer name, so this landed on arbitrary colours
+        // (magenta, lime) that fight the palette. One accent instead.
+        color: MyTheme.accent,
+        borderRadius: BorderRadius.circular(14.0),
       ),
       child: Text(
-        client.name.isNotEmpty ? client.name[0] : '?',
+        client.name.isNotEmpty ? client.name[0].toUpperCase() : '?',
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Colors.white,
-          fontSize: 55,
+          color: Color(0xFF3A2600),
+          fontSize: 46,
         ),
       ),
     );

@@ -442,6 +442,8 @@ class _CmHeaderState extends State<_CmHeader>
     super.build(context);
     return Container(
       decoration: BoxDecoration(
+        // Text inside follows the theme, not Colors.white - see below. The
+        // buttons further down keep white because they sit on solid colour.
         // was a cyan->blue gradient, the loudest element in the dialog and the
         // last obviously-upstream surface a user sees at connect time.
         color: Theme.of(context).colorScheme.background,
@@ -470,7 +472,7 @@ class _CmHeaderState extends State<_CmHeader>
                     child: Text(
                   client.name,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                     overflow: TextOverflow.ellipsis,
@@ -480,35 +482,35 @@ class _CmHeaderState extends State<_CmHeader>
                 FittedBox(
                   child: Text(
                     "(${client.peerId})",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color, fontSize: 14),
                   ),
                 ),
                 if (client.type_() == ClientType.terminal)
                   FittedBox(
                     child: Text(
                       translate("Terminal"),
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                      style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color?.withOpacity(0.7), fontSize: 12),
                     ),
                   ),
                 if (client.type_() == ClientType.file)
                   FittedBox(
                     child: Text(
                       translate("Transfer file"),
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                      style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color?.withOpacity(0.7), fontSize: 12),
                     ),
                   ),
                 if (client.type_() == ClientType.camera)
                   FittedBox(
                     child: Text(
                       translate("View camera"),
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                      style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color?.withOpacity(0.7), fontSize: 12),
                     ),
                   ),
                 if (client.portForward.isNotEmpty)
                   FittedBox(
                     child: Text(
                       "Port Forward: ${client.portForward}",
-                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                      style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color?.withOpacity(0.7), fontSize: 12),
                     ),
                   ),
                 SizedBox(height: 10.0),
@@ -521,7 +523,7 @@ class _CmHeaderState extends State<_CmHeader>
                               ? translate("Disconnected")
                               : translate("Connected")
                           : "${translate("Request access to your device")}...",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color),
                     ).marginOnly(right: 8.0),
                     if (client.authorized)
                       Obx(
@@ -529,7 +531,7 @@ class _CmHeaderState extends State<_CmHeader>
                           formatDurationToTime(
                             Duration(seconds: _time.value),
                           ),
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color),
                         ),
                       )
                   ],

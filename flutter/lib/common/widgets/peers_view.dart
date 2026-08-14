@@ -89,11 +89,14 @@ class _PeersView extends StatefulWidget {
 class _PeersViewState extends State<_PeersView>
     with WindowListener, WidgetsBindingObserver {
   static const int _maxQueryCount = 3;
+  // Literal copy rather than the upstream empty_*_tip keys: those carry
+  // "Oops, no recent sessions! Time to plan a new one." in every language file,
+  // so translating them would put the old voice straight back on screen.
   final HashMap<String, String> _emptyMessages = HashMap.from({
-    LoadEvent.recent: 'empty_recent_tip',
-    LoadEvent.favorite: 'empty_favorite_tip',
-    LoadEvent.lan: 'empty_lan_tip',
-    LoadEvent.addressBook: 'empty_address_book_tip',
+    LoadEvent.recent: 'No recent sessions.\nConnect to a device to see it here.',
+    LoadEvent.favorite: 'No favourites yet.\nStar a device to keep it close.',
+    LoadEvent.lan: 'No devices found on this network.',
+    LoadEvent.addressBook: 'Your address book is empty.',
   });
   final space = (isDesktop || isWebDesktop) ? 12.0 : 8.0;
   final _curPeers = <String>{};
@@ -192,17 +195,25 @@ class _PeersViewState extends State<_PeersView>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.sentiment_very_dissatisfied_rounded,
-                  color: Theme.of(context).tabBarTheme.labelColor,
-                  size: 40,
-                ).paddingOnly(bottom: 10),
+                  Icons.devices_other_outlined,
+                  color: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.color
+                      ?.withOpacity(0.35),
+                  size: 42,
+                ).paddingOnly(bottom: 14),
                 Text(
-                  translate(
-                    _emptyMessages[widget.peers.loadEvent] ?? 'Empty',
-                  ),
+                  _emptyMessages[widget.peers.loadEvent] ?? 'Nothing here yet.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Theme.of(context).tabBarTheme.labelColor,
+                    height: 1.5,
+                    fontSize: 13,
+                    color: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.color
+                        ?.withOpacity(0.55),
                   ),
                 ),
               ],

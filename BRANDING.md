@@ -123,6 +123,28 @@ the assumption.
 `install_me()` and the MSI/update path around `run_after_install`. Only the
 latter did upstream.
 
+### 9. Recolouring a surface means auditing everything on it
+
+Upstream paints several panels with saturated fills - a magenta-to-salmon
+gradient on the install card, cyan-to-blue on the connection-manager header -
+and hardcodes `Colors.white` for the text, buttons, links and icons sitting on
+them.
+
+Swapping the fill for a theme colour without touching the contents leaves white
+text on a light background: invisible, and only in the light theme, so it does
+not show up in dark-mode testing. This was hit three separate times.
+
+When changing a container's background, grep the whole widget for
+`Colors.white` and `Colors.white70` before moving on. Two rules:
+
+- text and icons **on a themed surface** follow
+  `Theme.of(context).textTheme.titleLarge?.color`
+- text and icons **on a solid accent fill** (buttons, badges) keep white, or use
+  a dark tone against the brand orange - `Color(0xFF3A2600)`
+
+Also check the language files: several upstream strings bake the product name
+into the copy rather than deriving it, so a rename leaves them stale.
+
 ---
 
 ## Server configuration

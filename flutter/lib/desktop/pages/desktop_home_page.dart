@@ -613,7 +613,11 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       return buildInstallCard("", systemError, "", () {});
     }
 
-    if (isWindows && !bind.isDisableInstallation()) {
+    // Not in the support client. It is a run-and-forget tool a customer opens
+    // once; "Install" and "Click to upgrade" are prompts they cannot act on
+    // meaningfully, and elevation is already handled per-session by the
+    // "Accept and elevate" button on the incoming-connection dialog.
+    if (isWindows && !bind.isDisableInstallation() && !bind.isIncomingOnly()) {
       if (!bind.mainIsInstalled()) {
         return buildInstallCard(
             "", bind.isOutgoingOnly() ? "" : "install_tip", "Install",
@@ -790,7 +794,9 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                             translate(content),
                             style: TextStyle(
                                 height: 1.5,
-                                color: Colors.white,
+                                // was white for the old magenta gradient; the
+                                // card is theme-coloured now, so follow the theme
+                                color: Theme.of(context).textTheme.titleLarge?.color,
                                 fontWeight: FontWeight.normal,
                                 fontSize: 13),
                           ).marginOnly(bottom: 20)
@@ -805,8 +811,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                       padding: 8,
                                       isOutline: true,
                                       text: translate(btnText),
-                                      textColor: Colors.white,
-                                      borderColor: Colors.white,
+                                      textColor: MyTheme.accent,
+                                      borderColor: MyTheme.accent,
                                       textSize: 20,
                                       radius: 10,
                                       onTap: onPressed,
@@ -825,7 +831,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                         style: TextStyle(
                                             decoration:
                                                 TextDecoration.underline,
-                                            color: Colors.white,
+                                            color: MyTheme.accent,
                                             fontSize: 12),
                                       )).marginOnly(top: 6)),
                             ]
@@ -838,7 +844,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
             child: IconButton(
               icon: Icon(
                 Icons.close,
-                color: Colors.white,
+                color: Theme.of(context).textTheme.titleLarge?.color,
                 size: 20,
               ),
               onPressed: closeCard,

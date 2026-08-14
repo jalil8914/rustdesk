@@ -2517,7 +2517,7 @@ class _AboutState extends State<_About> {
                     style: linkStyle,
                   ).marginSymmetric(vertical: 4.0)),
               Container(
-                decoration: const BoxDecoration(color: Color(0xFF2c8cff)),
+                decoration: const BoxDecoration(color: Color(0xFFF5A623)),
                 padding:
                     const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
                 child: SelectionArea(
@@ -2528,14 +2528,16 @@ class _AboutState extends State<_About> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Copyright © ${DateTime.now().toString().substring(0, 4)} Purslane Tech Pte. Ltd.\n$license',
-                            style: const TextStyle(color: Colors.white),
+                            'Copyright © ${DateTime.now().toString().substring(0, 4)} Aqsacloud.\n$license',
+                            style: const TextStyle(color: Color(0xFF3A2600)),
                           ),
+                          // Literal rather than translate('Slogan_tip'): that key
+                          // carries the upstream slogan in every language file.
                           Text(
-                            translate('Slogan_tip'),
+                            'Secure remote access on your own infrastructure.',
                             style: TextStyle(
                                 fontWeight: FontWeight.w800,
-                                color: Colors.white),
+                                color: Color(0xFF3A2600)),
                           )
                         ],
                       ),

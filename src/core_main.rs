@@ -33,9 +33,14 @@ pub fn core_main() -> Option<Vec<String>> {
         return None;
     }
     crate::load_custom_client();
-    // Set Aqsacloud Desk branding; overridable by custom.txt
+    // Set Aqsacloud branding; overridable by custom.txt.
+    //
+    // MUST stay within [a-zA-Z0-9-] - see validate_install_app_name in
+    // platform/windows.rs. The name is interpolated UNQUOTED into ~25 shell
+    // commands (`sc create {app_name}`, `reg add HKEY_CLASSES_ROOT\.{ext}`),
+    // so a space silently breaks Windows install and service creation.
     if config::APP_NAME.read().unwrap().eq("RustDesk") {
-        *config::APP_NAME.write().unwrap() = "Aqsacloud Desk".to_owned();
+        *config::APP_NAME.write().unwrap() = "Aqsacloud".to_owned();
     }
     if config::PROD_RENDEZVOUS_SERVER.read().unwrap().is_empty() {
         *config::PROD_RENDEZVOUS_SERVER.write().unwrap() = "40.81.233.123".to_owned();
@@ -48,6 +53,12 @@ pub fn core_main() -> Option<Vec<String>> {
     // value the user sets in the GUI (CONFIG2) still wins over this default.
     {
         let mut settings = config::DEFAULT_SETTINGS.write().unwrap();
+        // Also seed the visible option, not just PROD_RENDEZVOUS_SERVER: the
+        // Network settings dialog reads "custom-rendezvous-server", so without
+        // this the ID server box renders empty even though the fallback works.
+        settings
+            .entry("custom-rendezvous-server".to_owned())
+            .or_insert_with(|| "40.81.233.123".to_owned());
         settings
             .entry("key".to_owned())
             .or_insert_with(|| "ZcB8ewCtyWslUP911rTiyQ9B8LcO2brghndeO3UmImo=".to_owned());

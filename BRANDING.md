@@ -132,7 +132,7 @@ Set in `src/core_main.rs`, immediately after `crate::load_custom_client()`.
 | Setting | Value | Mechanism |
 |---|---|---|
 | App name | `Aqsacloud` | `config::APP_NAME` |
-| ID server | `40.81.233.123` | `PROD_RENDEZVOUS_SERVER` **and** `DEFAULT_SETTINGS["custom-rendezvous-server"]` |
+| ID server | `remote.aqsacloud.com` | `PROD_RENDEZVOUS_SERVER` **and** `DEFAULT_SETTINGS["custom-rendezvous-server"]` |
 | Public key | `ZcB8ew...ImIo=` | `DEFAULT_SETTINGS["key"]` |
 
 Two things worth understanding:
@@ -146,6 +146,13 @@ lowest tier gives a shipping default the user can still override in Settings.
 **Why both server keys.** `PROD_RENDEZVOUS_SERVER` works as a connection
 fallback, but the Network settings dialog reads the `custom-rendezvous-server`
 option — without it the ID server box renders empty and looks unconfigured.
+
+The ID server is a **hostname, never a bare IP**. It is compiled into every
+client, so a hardcoded address would strand every install if the server moved;
+a hostname makes that a DNS change. The Cloudflare record must stay **DNS only**
+(grey cloud) - the proxy handles HTTP/HTTPS, while this speaks raw TCP/UDP on
+21115-21119. Verify with `nslookup remote.aqsacloud.com 1.1.1.1`: it must return
+the origin IP, not a Cloudflare address.
 
 The Key shown in Settings is the server's **public** key. It is meant to be in
 every client and is not a secret.

@@ -148,7 +148,9 @@ class _PeerCardState extends State<_PeerCard>
       children: [
         Container(
             decoration: BoxDecoration(
-              color: str2color('${peer.id}${peer.platform}', 0x7f),
+              // str2color hashes id+platform, so every machine got a different
+              // arbitrary colour. One brand-tinted surface for all of them.
+              color: MyTheme.accent.withOpacity(0.13),
               borderRadius: isPortrait
                   ? BorderRadius.circular(_tileRadius)
                   : BorderRadius.only(
@@ -236,6 +238,7 @@ class _PeerCardState extends State<_PeerCard>
                     ],
                   ).marginOnly(top: 2),
                 ),
+                if (!isPortrait) _connectButton(peer),
                 isPortrait
                     ? checkBoxOrActionMorePortrait(peer)
                     : checkBoxOrActionMoreLandscape(peer, isTile: true),
@@ -306,7 +309,8 @@ class _PeerCardState extends State<_PeerCard>
               children: [
                 Expanded(
                   child: Container(
-                    color: str2color('${peer.id}${peer.platform}', 0x7f),
+                    // see makeChild: no per-peer hashed colours
+                    color: MyTheme.accent.withOpacity(0.13),
                     child: Row(
                       children: [
                         Expanded(
@@ -448,6 +452,36 @@ class _PeerCardState extends State<_PeerCard>
             _showPeerMenu(peer.id);
           });
     }
+  }
+
+  // Explicit connect affordance. Reuses widget.connect - the same callback
+  // the existing double-tap and context menu use - so this adds no new
+  // connection path. Hidden during multi-selection, where the checkbox owns
+  // this space, and landscape-only because the portrait row has no room.
+  Widget _connectButton(Peer peer) {
+    final PeerTabModel peerTabModel = Provider.of(context);
+    if (peerTabModel.multiSelectionMode) {
+      return const Offstage();
+    }
+    return Material(
+      color: MyTheme.accent,
+      borderRadius: BorderRadius.circular(7),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(7),
+        onTap: () => widget.connect(context, peer.id),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: Text(
+            translate('Connect'),
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF3A2600),
+            ),
+          ),
+        ),
+      ),
+    ).marginOnly(right: 6);
   }
 
   Widget checkBoxOrActionMoreLandscape(Peer peer, {required bool isTile}) {

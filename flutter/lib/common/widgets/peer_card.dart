@@ -21,7 +21,10 @@ typedef PopupMenuEntryBuilder = Future<List<mod_menu.PopupMenuEntry<String>>>
 
 enum PeerUiType { grid, tile, list }
 
-final peerCardUiType = PeerUiType.grid.obs;
+// Default to the row list rather than the upstream card grid. _loadLocalOptions
+// only overrides this when the user has actually saved a preference, so this is
+// the default for a fresh install and stays switchable from the view menu.
+final peerCardUiType = PeerUiType.list.obs;
 
 bool? hideUsernameOnCard;
 

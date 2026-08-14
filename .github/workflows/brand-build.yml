@@ -1,0 +1,18 @@
+name: Brand branch build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - copilot/merge-branches-into-main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/flutter-build.yml
+    with:
+      upload-artifact: true
+      upload-tag: brand-${{ github.run_number }}
+    secrets: inherit

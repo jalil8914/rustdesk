@@ -2519,34 +2519,75 @@ class _AboutState extends State<_About> {
                     translate('Website'),
                     style: linkStyle,
                   ).marginSymmetric(vertical: 4.0)),
+              // Branded footer. The link sits outside SelectionArea so the
+              // text-selection handler cannot swallow its tap.
               Container(
-                decoration: const BoxDecoration(color: Color(0xFFF5A623)),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
-                child: SelectionArea(
-                    child: Row(
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: 14),
+                padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5A623),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
+                    SelectionArea(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Copyright © ${DateTime.now().toString().substring(0, 4)} Aqsacloud.\n$license',
-                            style: const TextStyle(color: Color(0xFF3A2600)),
-                          ),
-                          // Literal rather than translate('Slogan_tip'): that key
-                          // carries the upstream slogan in every language file.
-                          Text(
+                          const Text(
                             'Secure remote access on your own infrastructure.',
                             style: TextStyle(
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF3A2600)),
-                          )
+                              fontSize: 15,
+                              height: 1.35,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF3A2600),
+                            ),
+                          ),
+                          Container(
+                            height: 1,
+                            color: const Color(0x333A2600),
+                          ).marginSymmetric(vertical: 12),
+                          const Text(
+                            'Muhammad Asif Ali',
+                            style: TextStyle(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF3A2600),
+                            ),
+                          ),
+                          const Text(
+                            'Chief Executive Officer, Aqsacloud',
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              color: Color(0xCC3A2600),
+                            ),
+                          ).marginOnly(top: 1),
                         ],
                       ),
                     ),
+                    InkWell(
+                      onTap: () => launchUrlString('https://aqsacloud.com'),
+                      child: const Text(
+                        'aqsacloud.com',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF3A2600),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ).marginOnly(top: 12, bottom: 2),
+                    ),
+                    Text(
+                      'Copyright © ${DateTime.now().toString().substring(0, 4)} Aqsacloud.  $license',
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        color: Color(0xAA3A2600),
+                      ),
+                    ).marginOnly(top: 10),
                   ],
-                )),
+                ),
               ).marginSymmetric(vertical: 4.0)
             ],
           ).marginOnly(left: _kContentHMargin)

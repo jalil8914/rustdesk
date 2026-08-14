@@ -81,14 +81,11 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       color: const Color(0xFF0A1220),
       child: Column(
         children: [
+          // The real cloud mark from assets/icon.png - this used to be a bare
+          // rounded rectangle, which rendered as an empty box in the rail.
           Container(
             margin: const EdgeInsets.only(top: 14, bottom: 8),
-            width: 26,
-            height: 26,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
-              border: Border.all(color: const Color(0xFFF5A623), width: 2.5),
-            ),
+            child: loadIcon(26),
           ),
           Expanded(child: Container()),
           InkWell(

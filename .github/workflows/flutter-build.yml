@@ -371,6 +371,25 @@ jobs:
           mkdir -p ./SignOutput
           mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
 
+      # Customer-facing support client. Same payload as the portable build above;
+      # only the executable name differs, which apply_branding() detects and uses
+      # to switch the app into receive-only mode. Re-packing costs seconds,
+      # whereas a build flag would mean compiling the whole matrix twice.
+      - name: Build Aqsacloud Support (portable, receive-only)
+        shell: bash
+        if: env.UPLOAD_ARTIFACT == 'true'
+        run: |
+          set -e
+          rm -rf ./support-payload
+          cp -r ./rustdesk ./support-payload
+          mv ./support-payload/rustdesk.exe ./support-payload/AqsacloudSupport.exe
+          pushd ./libs/portable
+          python3 ./generate.py -f ../../support-payload/ -o . -e ../../support-payload/AqsacloudSupport.exe
+          popd
+          mv ./target/release/rustdesk-portable-packer.exe \
+             ./SignOutput/AqsacloudSupport-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
+          ls -la ./SignOutput/
+
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
 
@@ -404,6 +423,7 @@ jobs:
           files: |
             ./SignOutput/rustdesk-*.msi
             ./SignOutput/rustdesk-*.exe
+            ./SignOutput/AqsacloudSupport-*.exe
 
   # The fallback for the flutter version, we use Sciter for 32bit Windows.
   build-for-windows-sciter:

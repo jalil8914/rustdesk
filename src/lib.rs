@@ -83,6 +83,21 @@ mod kcp_stream;
 ///
 /// Every value is set only when unset, so a custom.txt config or a user's own
 /// choice in Settings still wins.
+/// True when this binary is running as the customer-facing support client.
+///
+/// The support client is the same executable under a different filename, so a
+/// second full build of the matrix is not needed - the portable packer records
+/// whatever name it is given and the name survives extraction.
+fn is_support_client() -> bool {
+    std::env::current_exe()
+        .ok()
+        .and_then(|p| {
+            p.file_stem()
+                .map(|s| s.to_string_lossy().to_lowercase())
+        })
+        .map_or(false, |name| name.contains("support"))
+}
+
 pub fn apply_branding() {
     // MUST stay within [a-zA-Z0-9-] - see validate_install_app_name in
     // platform/windows.rs. The name is interpolated UNQUOTED into ~25 shell
@@ -113,5 +128,18 @@ pub fn apply_branding() {
         settings
             .entry("key".to_owned())
             .or_insert_with(|| "ZcB8ewCtyWslUP911rTiyQ9B8LcO2brghndeO3UmImo=".to_owned());
+    }
+
+    // Customer-facing support client: receive connections only.
+    //
+    // is_incoming_only() reads exactly this key, and the Flutter layer keys the
+    // narrow single-pane window, the hidden connect field and the suppressed
+    // install prompt off it. Set here so it lands before any UI reads it, on
+    // both the desktop and mobile entry points.
+    if is_support_client() {
+        hbb_common::config::HARD_SETTINGS
+            .write()
+            .unwrap()
+            .insert("conn-type".to_owned(), "incoming".to_owned());
     }
 }

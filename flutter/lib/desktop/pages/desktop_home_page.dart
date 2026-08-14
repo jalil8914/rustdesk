@@ -81,14 +81,11 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       color: const Color(0xFF0A1220),
       child: Column(
         children: [
+          // The real cloud mark from assets/icon.png - this used to be a bare
+          // rounded rectangle, which rendered as an empty box in the rail.
           Container(
             margin: const EdgeInsets.only(top: 14, bottom: 8),
-            width: 26,
-            height: 26,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
-              border: Border.all(color: const Color(0xFFF5A623), width: 2.5),
-            ),
+            child: loadIcon(26),
           ),
           Expanded(child: Container()),
           InkWell(
@@ -174,7 +171,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     return ChangeNotifierProvider.value(
       value: gFFI.serverModel,
       child: Container(
-        width: isIncomingOnly ? 280.0 : 240.0,
+        width: isIncomingOnly ? 300.0 : 300.0,
         color: Theme.of(context).scaffoldBackgroundColor,
         child: Stack(
           children: [
@@ -234,11 +231,11 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     final model = gFFI.serverModel;
     final textColor = Theme.of(context).textTheme.titleLarge?.color;
     return Container(
-      margin: const EdgeInsets.fromLTRB(14, 8, 14, 6),
-      padding: const EdgeInsets.fromLTRB(14, 11, 8, 12),
+      margin: const EdgeInsets.fromLTRB(14, 10, 14, 8),
+      padding: const EdgeInsets.fromLTRB(16, 12, 10, 13),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,36 +244,59 @@ class _DesktopHomePageState extends State<DesktopHomePage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                translate("ID").toUpperCase(),
+                'YOUR DESK',
                 style: TextStyle(
                   fontSize: 11,
-                  letterSpacing: 1.4,
-                  color: textColor?.withOpacity(0.5),
+                  letterSpacing: 1.6,
+                  fontWeight: FontWeight.w500,
+                  color: textColor?.withOpacity(0.45),
                 ),
               ),
               buildPopupMenu(context),
             ],
           ),
-          GestureDetector(
-            onDoubleTap: () {
-              Clipboard.setData(ClipboardData(text: model.serverId.text));
-              showToast(translate("Copied"));
-            },
-            child: TextFormField(
-              controller: model.serverId,
-              readOnly: true,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.only(top: 4, bottom: 0),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onDoubleTap: () {
+                    Clipboard.setData(ClipboardData(text: model.serverId.text));
+                    showToast(translate("Copied"));
+                  },
+                  child: TextFormField(
+                    controller: model.serverId,
+                    readOnly: true,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.only(top: 2, bottom: 0),
+                    ),
+                    style: const TextStyle(
+                      fontSize: 31,
+                      height: 1.15,
+                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.w600,
+                      color: MyTheme.accent,
+                    ),
+                  ).workaroundFreezeLinuxMint(),
+                ),
               ),
-              style: const TextStyle(
-                fontSize: 25,
-                letterSpacing: 1.0,
-                fontWeight: FontWeight.w500,
-                color: MyTheme.accent,
+              InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: model.serverId.text));
+                  showToast(translate("Copied"));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: Icon(
+                    Icons.copy_rounded,
+                    size: 18,
+                    color: textColor?.withOpacity(0.5),
+                  ),
+                ),
               ),
-            ).workaroundFreezeLinuxMint(),
+            ],
           ),
         ],
       ),
@@ -335,7 +355,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoSizeText(
-            translate("One-time Password").toUpperCase(),
+            'ONE-TIME PASSWORD',
             style: TextStyle(
               fontSize: 11,
               letterSpacing: 1.4,

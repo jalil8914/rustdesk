@@ -96,6 +96,10 @@ class _DesktopTabPageState extends State<DesktopTabPage> {
             backgroundColor: Theme.of(context).colorScheme.background,
             body: DesktopTab(
               controller: tabController,
+              // Show the wordmark in the title bar. With only Home open the tab
+              // chips are already suppressed by _ListView.isHideSingleItem, so
+              // this turns a bare tab strip into branded window chrome.
+              showTitle: true,
               tail: Offstage(
                 offstage: bind.isIncomingOnly() || bind.isDisableSettings(),
                 child: ActionIcon(

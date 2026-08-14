@@ -941,13 +941,15 @@ pub fn is_modifier(evt: &KeyEvent) -> bool {
 }
 
 pub fn check_software_update() {
-    if is_custom_client() {
-        return;
-    }
-    let opt = LocalConfig::get_option(keys::OPTION_ENABLE_CHECK_UPDATE);
-    if config::option2bool(keys::OPTION_ENABLE_CHECK_UPDATE, &opt) {
-        std::thread::spawn(move || allow_err!(do_check_software_update()));
-    }
+    // Disabled for this branded build.
+    //
+    // do_check_software_update posts to https://api.rustdesk.com/version/latest
+    // and the response carries a URL pointing at upstream's own releases. Acting
+    // on it would offer the user a download that replaces this client with stock
+    // RustDesk, so the check never runs and SOFTWARE_UPDATE_URL stays empty,
+    // which also keeps the Update button hidden on the home page.
+    //
+    // Updates are distributed from our own release page instead.
 }
 
 // No need to check `danger_accept_invalid_cert` for now.

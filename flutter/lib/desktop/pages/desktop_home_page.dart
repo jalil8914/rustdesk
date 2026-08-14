@@ -613,7 +613,11 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       return buildInstallCard("", systemError, "", () {});
     }
 
-    if (isWindows && !bind.isDisableInstallation()) {
+    // Not in the support client. It is a run-and-forget tool a customer opens
+    // once; "Install" and "Click to upgrade" are prompts they cannot act on
+    // meaningfully, and elevation is already handled per-session by the
+    // "Accept and elevate" button on the incoming-connection dialog.
+    if (isWindows && !bind.isDisableInstallation() && !bind.isIncomingOnly()) {
       if (!bind.mainIsInstalled()) {
         return buildInstallCard(
             "", bind.isOutgoingOnly() ? "" : "install_tip", "Install",

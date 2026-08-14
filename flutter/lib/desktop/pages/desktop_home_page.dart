@@ -64,11 +64,54 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (!isIncomingOnly) _buildIconRail(context),
         buildLeftPane(context),
         if (!isIncomingOnly) const VerticalDivider(width: 1),
         if (!isIncomingOnly) Expanded(child: buildRightPane(context)),
       ],
     ));
+  }
+
+  // Brand rail. Uses Expanded-as-spacer (not Spacer) to match the sizing
+  // pattern already proven in buildLeftPane below.
+  Widget _buildIconRail(BuildContext context) {
+    final iconColor = Theme.of(context).textTheme.titleLarge?.color;
+    return Container(
+      width: 52,
+      color: const Color(0xFF0A1220),
+      child: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 14, bottom: 8),
+            width: 26,
+            height: 26,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7),
+              border: Border.all(color: const Color(0xFFF5A623), width: 2.5),
+            ),
+          ),
+          Expanded(child: Container()),
+          InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () {
+              if (DesktopSettingPage.tabKeys.isNotEmpty) {
+                DesktopSettingPage.switch2page(DesktopSettingPage.tabKeys[0]);
+              }
+            },
+            child: Container(
+              width: 36,
+              height: 36,
+              margin: const EdgeInsets.only(bottom: 10),
+              child: Icon(
+                Icons.settings,
+                size: 20,
+                color: iconColor?.withOpacity(0.55),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildBlock({required Widget child}) {
@@ -131,7 +174,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     return ChangeNotifierProvider.value(
       value: gFFI.serverModel,
       child: Container(
-        width: isIncomingOnly ? 280.0 : 200.0,
+        width: isIncomingOnly ? 280.0 : 240.0,
         color: Theme.of(context).colorScheme.background,
         child: Stack(
           children: [

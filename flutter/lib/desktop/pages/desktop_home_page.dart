@@ -790,7 +790,9 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                             translate(content),
                             style: TextStyle(
                                 height: 1.5,
-                                color: Colors.white,
+                                // was white for the old magenta gradient; the
+                                // card is theme-coloured now, so follow the theme
+                                color: Theme.of(context).textTheme.titleLarge?.color,
                                 fontWeight: FontWeight.normal,
                                 fontSize: 13),
                           ).marginOnly(bottom: 20)
@@ -805,8 +807,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                       padding: 8,
                                       isOutline: true,
                                       text: translate(btnText),
-                                      textColor: Colors.white,
-                                      borderColor: Colors.white,
+                                      textColor: MyTheme.accent,
+                                      borderColor: MyTheme.accent,
                                       textSize: 20,
                                       radius: 10,
                                       onTap: onPressed,
@@ -825,7 +827,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                         style: TextStyle(
                                             decoration:
                                                 TextDecoration.underline,
-                                            color: Colors.white,
+                                            color: MyTheme.accent,
                                             fontSize: 12),
                                       )).marginOnly(top: 6)),
                             ]
@@ -838,7 +840,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
             child: IconButton(
               icon: Icon(
                 Icons.close,
-                color: Colors.white,
+                color: Theme.of(context).textTheme.titleLarge?.color,
                 size: 20,
               ),
               onPressed: closeCard,

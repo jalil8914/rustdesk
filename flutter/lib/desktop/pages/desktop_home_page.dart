@@ -59,10 +59,26 @@ class _DesktopHomePageState extends State<DesktopHomePage>
 
   final GlobalKey _childKey = GlobalKey();
 
+  // Set per-frame by the LayoutBuilder in build(); read by the Row above.
+  bool _wide = true;
+
+  static const double _kSidebarWidth = 172;
+  static const double _kIdPaneWidth = 300;
+  // Below this the fixed panes leave too little for the connect card.
+  static const double _kSidebarMinTotal =
+      _kSidebarWidth + _kIdPaneWidth + 380;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final isIncomingOnly = bind.isIncomingOnly();
+    return LayoutBuilder(builder: (context, constraints) {
+      _wide = constraints.maxWidth >= _kSidebarMinTotal;
+      return _buildBlockOuter(context, isIncomingOnly);
+    });
+  }
+
+  Widget _buildBlockOuter(BuildContext context, bool isIncomingOnly) {
     return _buildBlock(
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +94,12 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       children: isIncomingOnly
           ? [buildLeftPane(context)]
           : [
-              _buildIconRail(context),
+              // The sidebar (172) and the ID column (300) are fixed width, so a
+              // narrow window overflows the Row. Drop the sidebar first - its
+              // destinations are all still reachable from the tab strip above
+              // the device list - and never drop the ID column, which is the
+              // whole point of the screen.
+              if (_wide) _buildIconRail(context),
               Expanded(child: buildRightPane(context)),
               const VerticalDivider(width: 1),
               buildLeftPane(context),
@@ -140,7 +161,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   Widget _buildIconRail(BuildContext context) {
     final textColor = Theme.of(context).textTheme.titleLarge?.color;
     return Container(
-      width: 172,
+      width: _kSidebarWidth,
       color: Theme.of(context).colorScheme.background,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

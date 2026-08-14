@@ -1,3 +1,4 @@
+import 'package:flutter_hbb/models/peer_tab_model.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
@@ -53,6 +54,8 @@ class _DesktopHomePageState extends State<DesktopHomePage>
 
   final RxBool _editHover = false.obs;
   final RxBool _block = false.obs;
+  // mirrors peerTabModel so the sidebar highlight follows the list
+  final RxInt _railTab = 0.obs;
 
   final GlobalKey _childKey = GlobalKey();
 
@@ -74,41 +77,119 @@ class _DesktopHomePageState extends State<DesktopHomePage>
 
   // Brand rail. Uses Expanded-as-spacer (not Spacer) to match the sizing
   // pattern already proven in buildLeftPane below.
-  Widget _buildIconRail(BuildContext context) {
-    final iconColor = Theme.of(context).textTheme.titleLarge?.color;
+  // Labelled sidebar. Each entry drives something that already exists -
+  // peerTabModel for the device lists, DesktopSettingPage for settings - so
+  // this is navigation and presentation, not new behaviour.
+  Widget _railItem({
+    required IconData icon,
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    final textColor = Theme.of(context).textTheme.titleLarge?.color;
     return Container(
-      width: 52,
-      color: const Color(0xFF0A1220),
-      child: Column(
-        children: [
-          // The real cloud mark from assets/icon.png - this used to be a bare
-          // rounded rectangle, which rendered as an empty box in the rail.
-          Container(
-            margin: const EdgeInsets.only(top: 14, bottom: 8),
-            child: loadIcon(26),
-          ),
-          Expanded(child: Container()),
-          InkWell(
-            borderRadius: BorderRadius.circular(8),
-            onTap: () {
-              if (DesktopSettingPage.tabKeys.isNotEmpty) {
-                DesktopSettingPage.switch2page(DesktopSettingPage.tabKeys[0]);
-              }
-            },
-            child: Container(
-              width: 36,
-              height: 36,
-              margin: const EdgeInsets.only(bottom: 10),
-              child: Icon(
-                Icons.settings,
-                size: 20,
-                color: iconColor?.withOpacity(0.55),
-              ),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      child: Material(
+        color: selected ? MyTheme.accent.withOpacity(0.14) : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 9),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  size: 18,
+                  color: selected ? MyTheme.accent : textColor?.withOpacity(0.55),
+                ),
+                const SizedBox(width: 11),
+                Flexible(
+                  child: Text(
+                    label,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
+                      color: selected
+                          ? MyTheme.accent
+                          : textColor?.withOpacity(0.85),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIconRail(BuildContext context) {
+    final textColor = Theme.of(context).textTheme.titleLarge?.color;
+    return Container(
+      width: 172,
+      color: Theme.of(context).colorScheme.background,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              loadIcon(24),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  bind.mainGetAppNameSync(),
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
+                  ),
+                ),
+              ),
+            ],
+          ).marginOnly(left: 14, right: 10, top: 14, bottom: 14),
+          // Labels and icons come from PeerTabModel so they stay in sync with
+          // the existing tab bar, stay translated, and respect which tabs the
+          // user has enabled.
+          Obx(() {
+            final tab = _railTab.value;
+            final model = gFFI.peerTabModel;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: model.visibleEnabledOrderedIndexs
+                  .map((i) => _railItem(
+                        icon: model.tabIcon(i),
+                        label: model.tabTooltip(i),
+                        selected: tab == i,
+                        onTap: () => _selectPeerTab(i),
+                      ))
+                  .toList(),
+            );
+          }),
+          Expanded(child: Container()),
+          if (!bind.isDisableSettings())
+            _railItem(
+              icon: Icons.settings_outlined,
+              label: translate('Settings'),
+              selected: false,
+              onTap: () {
+                if (DesktopSettingPage.tabKeys.isNotEmpty) {
+                  DesktopSettingPage.switch2page(DesktopSettingPage.tabKeys[0]);
+                }
+              },
+            ),
+          const SizedBox(height: 8),
         ],
       ),
     );
+  }
+
+  void _selectPeerTab(int index) {
+    _railTab.value = index;
+    gFFI.peerTabModel.setCurrentTab(index);
   }
 
   Widget _buildBlock({required Widget child}) {

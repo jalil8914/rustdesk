@@ -121,6 +121,9 @@ class _PeerTabPageState extends State<PeerTabPage>
                     Expanded(
                         child: visibleContextMenuListener(
                             _createSwitchBar(context))),
+                    // Keeps the tab glyphs off the search/list actions once the
+                    // sidebar and ID column have taken their fixed widths.
+                    const SizedBox(width: 10),
                     if (stateGlobal.isPortrait.isTrue)
                       ..._portraitRightActions(context)
                     else
@@ -141,7 +144,9 @@ class _PeerTabPageState extends State<PeerTabPage>
         buildDefaultDragHandles: false,
         onReorder: model.reorder,
         scrollDirection: Axis.horizontal,
-        physics: NeverScrollableScrollPhysics(),
+        // Was NeverScrollable, so a cramped row clipped the tabs into the
+        // actions beside it instead of letting them scroll.
+        physics: const ClampingScrollPhysics(),
         children: model.visibleEnabledOrderedIndexs.map((t) {
           final selected = model.currentTab == t;
           final color = selected

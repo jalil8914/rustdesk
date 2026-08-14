@@ -50,6 +50,10 @@ fn initialize(app_dir: &str, custom_client_config: &str) {
     } else {
         crate::read_custom_client(custom_client_config);
     }
+    // Same reasoning: core_main() never runs under Flutter mobile, so the
+    // branding defaults have to be applied here too or Android and iOS come up
+    // as "RustDesk" with an unconfigured server.
+    crate::apply_branding();
     #[cfg(target_os = "android")]
     {
         // flexi_logger can't work when android_logger initialized.

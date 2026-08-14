@@ -33,42 +33,7 @@ pub fn core_main() -> Option<Vec<String>> {
         return None;
     }
     crate::load_custom_client();
-    // Set Aqsacloud branding; overridable by custom.txt.
-    //
-    // MUST stay within [a-zA-Z0-9-] - see validate_install_app_name in
-    // platform/windows.rs. The name is interpolated UNQUOTED into ~25 shell
-    // commands (`sc create {app_name}`, `reg add HKEY_CLASSES_ROOT\.{ext}`),
-    // so a space silently breaks Windows install and service creation.
-    if config::APP_NAME.read().unwrap().eq("RustDesk") {
-        *config::APP_NAME.write().unwrap() = "Aqsacloud".to_owned();
-    }
-    // Use the hostname, never the bare IP. This value is compiled into every
-    // client, so if the server ever moves, a hardcoded IP would strand every
-    // installed copy; a DNS change reaches them all instead.
-    //
-    // The Cloudflare record must stay "DNS only" (grey cloud) - the proxy only
-    // handles HTTP/HTTPS, and this speaks raw TCP/UDP on 21115-21119.
-    if config::PROD_RENDEZVOUS_SERVER.read().unwrap().is_empty() {
-        *config::PROD_RENDEZVOUS_SERVER.write().unwrap() = "remote.aqsacloud.com".to_owned();
-    }
-    // Built-in default for the self-hosted server's public key.
-    //
-    // config::RS_PUB_KEY is a `const` inside the hbb_common submodule, which this
-    // repo cannot patch, so the key is injected as a runtime setting instead.
-    // DEFAULT_SETTINGS is the lowest-priority source in Config::get_option, so a
-    // value the user sets in the GUI (CONFIG2) still wins over this default.
-    {
-        let mut settings = config::DEFAULT_SETTINGS.write().unwrap();
-        // Also seed the visible option, not just PROD_RENDEZVOUS_SERVER: the
-        // Network settings dialog reads "custom-rendezvous-server", so without
-        // this the ID server box renders empty even though the fallback works.
-        settings
-            .entry("custom-rendezvous-server".to_owned())
-            .or_insert_with(|| "remote.aqsacloud.com".to_owned());
-        settings
-            .entry("key".to_owned())
-            .or_insert_with(|| "ZcB8ewCtyWslUP911rTiyQ9B8LcO2brghndeO3UmImo=".to_owned());
-    }
+    crate::apply_branding();
     #[cfg(windows)]
     if !crate::platform::windows::bootstrap() {
         // return None to terminate the process

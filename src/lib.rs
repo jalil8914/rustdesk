@@ -74,3 +74,44 @@ pub mod privacy_mode;
 pub mod virtual_display_manager;
 
 mod kcp_stream;
+
+/// Apply the Aqsacloud defaults.
+///
+/// Called from BOTH entry points. core_main() only runs on desktop; Flutter
+/// mobile loads the library directly, so anything set only there leaves Android
+/// and iOS showing "RustDesk" with an unconfigured server.
+///
+/// Every value is set only when unset, so a custom.txt config or a user's own
+/// choice in Settings still wins.
+pub fn apply_branding() {
+    // MUST stay within [a-zA-Z0-9-] - see validate_install_app_name in
+    // platform/windows.rs. The name is interpolated UNQUOTED into ~25 shell
+    // commands, so a space silently breaks Windows install.
+    if hbb_common::config::APP_NAME.read().unwrap().eq("RustDesk") {
+        *hbb_common::config::APP_NAME.write().unwrap() = "Aqsacloud".to_owned();
+    }
+    if hbb_common::config::PROD_RENDEZVOUS_SERVER
+        .read()
+        .unwrap()
+        .is_empty()
+    {
+        *hbb_common::config::PROD_RENDEZVOUS_SERVER.write().unwrap() =
+            "remote.aqsacloud.com".to_owned();
+    }
+    // RS_PUB_KEY is a const inside the hbb_common submodule and cannot be
+    // patched from this repo, so the key is injected as a runtime setting.
+    // DEFAULT_SETTINGS is the lowest-priority source in Config::get_option, so
+    // a value the user sets in the GUI still overrides it.
+    //
+    // custom-rendezvous-server is seeded too: the Network dialog reads the
+    // option, so without it the ID server box renders empty.
+    {
+        let mut settings = hbb_common::config::DEFAULT_SETTINGS.write().unwrap();
+        settings
+            .entry("custom-rendezvous-server".to_owned())
+            .or_insert_with(|| "remote.aqsacloud.com".to_owned());
+        settings
+            .entry("key".to_owned())
+            .or_insert_with(|| "ZcB8ewCtyWslUP911rTiyQ9B8LcO2brghndeO3UmImo=".to_owned());
+    }
+}

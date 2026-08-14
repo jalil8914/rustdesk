@@ -3746,6 +3746,11 @@ Color? disabledTextColor(BuildContext context, bool enabled) {
 }
 
 Widget loadPowered(BuildContext context) {
+  // Upstream shows "Powered by <vendor>" so custom clients credit RustDesk.
+  // On our own product it is redundant self-branding, and it still rendered the
+  // pre-rename "Aqsacloud Desk" because the string lives in every lang file.
+  return SizedBox.shrink();
+  // ignore: dead_code
   if (bind.mainGetBuildinOption(key: "hide-powered-by-me") == 'Y') {
     return SizedBox.shrink();
   }

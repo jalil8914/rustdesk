@@ -33,9 +33,14 @@ pub fn core_main() -> Option<Vec<String>> {
         return None;
     }
     crate::load_custom_client();
-    // Set Aqsacloud Desk branding; overridable by custom.txt
+    // Set Aqsacloud branding; overridable by custom.txt.
+    //
+    // MUST stay within [a-zA-Z0-9-] - see validate_install_app_name in
+    // platform/windows.rs. The name is interpolated UNQUOTED into ~25 shell
+    // commands (`sc create {app_name}`, `reg add HKEY_CLASSES_ROOT\.{ext}`),
+    // so a space silently breaks Windows install and service creation.
     if config::APP_NAME.read().unwrap().eq("RustDesk") {
-        *config::APP_NAME.write().unwrap() = "Aqsacloud Desk".to_owned();
+        *config::APP_NAME.write().unwrap() = "Aqsacloud".to_owned();
     }
     if config::PROD_RENDEZVOUS_SERVER.read().unwrap().is_empty() {
         *config::PROD_RENDEZVOUS_SERVER.write().unwrap() = "40.81.233.123".to_owned();
